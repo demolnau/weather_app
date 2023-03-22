@@ -4,7 +4,7 @@
   <title>Document</title>
     <!-- Load icon library -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 <!-- The form -->
@@ -17,8 +17,15 @@
     <p id="region"></p>
     <p id="country"></p>
     <p id="lat/lon"></p>
-    <div>
+    <div id="temp_choice">
         <p id="temperature"></p>
+        <!-- Rounded switch -->
+        <label class="switch">
+          <label for="switch3" >Temperature in F</label>
+          <input type="checkbox" id="switch3">
+          <span class="slider round"></span>
+          
+        </label>
     </div>
 
     <p id="last_updated"></p>
@@ -38,6 +45,17 @@
     let temperature = document.getElementById("temperature")
     let last_updated =document.getElementById("last_updated")
     let condition = document.getElementById("condition")
+    /*
+    let temp_switch = document.getElementById("switch")
+    let temp_checkbox= document.createElement("input")
+    temp_checkbox.setAttribute("type","checkbox")
+    temp_switch.appendChild(temp_checkbox)
+    let temp_span = document.createElement("span")
+    temp_span.classList.add("slider")
+    temp_span.classList.add("round")
+    temp_switch.appendChild(temp_span)
+*/    
+
 
     async function getInfo(searchThis){
       console.log("Term searched: "+ searchThis)

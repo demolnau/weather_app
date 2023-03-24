@@ -6,12 +6,23 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="style.css"/>
 </head>
+
 <body>
 <!-- The form -->
-<form class="example" action="#">
+<form class="search_form" action="#">
   <input type="text" id="search_text" placeholder="Search.." name="search">
   <button type="submit"><i class="fa fa-search"></i></button>
 </form>
+
+<div id="temp_switch">
+  <p id="switch_label">Temperature in Fehrenheit</p>
+  <!-- Rounded switch -->
+  <label class="switch">
+    <input type="checkbox" id="switch3">
+    <span class="slider round"></span>
+  </label>
+</div>
+
 <div id="content">
     <p id="city"></p>
     <p id="region"></p>
@@ -19,15 +30,9 @@
     <p id="lat/lon"></p>
     <div id="temp_choice">
         <p id="temperature"></p>
-        <!-- Rounded switch -->
-        <label class="switch">
-          <label for="switch3" >Temperature in F</label>
-          <input type="checkbox" id="switch3">
-          <span class="slider round"></span>
-          
-        </label>
+        <p id="feels_like"></p>
     </div>
-
+    <p id="humidity"></p>
     <p id="last_updated"></p>
     <p id="condition"></p>
 </div>
@@ -43,61 +48,107 @@
     let country =document.getElementById("country")
     let latLon = document.getElementById("lat/lon")
     let temperature = document.getElementById("temperature")
+    let feels_like = document.getElementById("feels_like")
     let last_updated =document.getElementById("last_updated")
     let condition = document.getElementById("condition")
-    /*
-    let temp_switch = document.getElementById("switch")
-    let temp_checkbox= document.createElement("input")
-    temp_checkbox.setAttribute("type","checkbox")
-    temp_switch.appendChild(temp_checkbox)
-    let temp_span = document.createElement("span")
-    temp_span.classList.add("slider")
-    temp_span.classList.add("round")
-    temp_switch.appendChild(temp_span)
-*/    
+    let humidity = document.getElementById("humidity")
+    let temp_checkbox = document.getElementById("switch3")
+    let search_begun = false;
+    let searchThis = ""; 
+
+
 
 
     async function getInfo(searchThis){
       console.log("Term searched: "+ searchThis)
       try{
         const response = await fetch(`http://api.weatherapi.com/v1/current.json?key=3624a068aef7412f8f6204644232103&q=${searchThis}&aqi=no`, {mode: 'cors'})
-        const weatherData = await response.json();
-        console.log(weatherData)
-        city.innerHTML= `City: ${weatherData.location.name}`
-        region.innerHTML = `Region: ${weatherData.location.region}`
-        country.innerHTML = `Country: ${weatherData.location.country}`
-        latLon.innerHTML= "Latitude: " + weatherData.location.lat+ ", Longitutude: " + weatherData.location.lon;
-        temperature.innerHTML = "Temperature in F: " + weatherData.current.temp_f + " Temperature in C: " + weatherData.current.temp_c;
-        last_updated.innerHTML = "Last updated: "+ weatherData.current.last_updated;
-        condition.innerHTML= `Weather conditions: ${weatherData.current.condition.text}`
-        searchImage.src = weatherData.current.condition.icon
+        if (!response.ok){
+          throw new Error(`Error! status: ${response.status}`);
+        } 
+
+          const weatherData = await response.json();
+          console.log(weatherData);
+          city.innerHTML= `City: ${weatherData.location.name}`;
+          region.innerHTML = `Region: ${weatherData.location.region}`;
+          country.innerHTML = `Country: ${weatherData.location.country}`;
+          latLon.innerHTML = "Latitude: " + weatherData.location.lat+ ", Longitutude: " + weatherData.location.lon;
+          if(temp_checkbox.checked == true) {
+            temperature.innerHTML = "Temperature: " + weatherData.current.temp_f +" degrees Fehrenheit";
+            feels_like.innerHTML = "Feels like: " + weatherData.current.feelslike_f + " degrees Fehrenheit"
+          }   else { 
+            temperature.innerHTML =  " Temperature: " + weatherData.current.temp_c + " degrees Celsius";
+            feels_like.innerHTML = "Feels like: " + weatherData.current.feelslike_c + " degrees Celsius"
+          } 
+
+          last_updated.innerHTML = "Last updated: "+ weatherData.current.last_updated;
+          condition.innerHTML= `Weather conditions: ${weatherData.current.condition.text}`;
+          humidity.innerHTML = `Humidity: ${weatherData.current.humidity}%`
+          searchImage.src = weatherData.current.condition.icon;
+          return weatherData;
         
       }
       catch(error){
-        console.log(error)
-        content.innerHTML = "Weather API does not have data for that city."
+        console.log(error);
+        content.innerHTML = "Weather API does not have data for that city.";
+        document.body.appendChild(content)
       }
 
     }
 
-    async function showResults(){
+    function showResults(){
+      content.innerHTML=""
       content.appendChild(city)
       content.appendChild(region)
       content.appendChild(country)
       content.appendChild(latLon)
       content.appendChild(last_updated)
       content.appendChild(temperature)
+      content.appendChild(feels_like)
       content.appendChild(condition)
+      content.appendChild(humidity)
       document.body.appendChild(content)
       document.body.appendChild(searchImage)
     }
 
-    search_btn.onclick= function(){
-        let searchThis = searchTerms.value
-        searchTerms.value=""
-        getInfo(searchThis)
-        showResults()
+    async function check_weather(){
+          if (searchThis != searchTerms.value){
+            searchThis = searchTerms.value;
+          }
+          else{
+            console.log("entered loop!")
+            console.log(`Search term still: ${searchThis}`)
+          }
+          console.log("search this:" + searchThis)
+          
+          await getInfo(searchThis);
+          showResults();
     }
+
+    
+    temp_checkbox.onclick = function(){
+      if(search_begun == true){
+        if(temp_checkbox.checked==true){
+          console.log(searchTerms)
+        console.log("Changing the temperature to fahrenheit");
+        check_weather();
+        }
+        else{
+          console.log("changing the temperature to celsius");
+          check_weather();
+        }
+      }
+      else{
+        console.log("city not selected yet.")
+      }
+      
+    }
+    
+    search_btn.onclick = function(){
+      search_begun = true;
+      check_weather();
+    };
+
     
   
 

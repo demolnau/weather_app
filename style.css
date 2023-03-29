@@ -1,8 +1,57 @@
-/* The switch - the box around the slider */
+body{
+  background-image: url("./images/simple_solar_system_wallpaper.jpg");
+  color: white;
+  background-attachment: fixed;
+  overflow: hidden;
+  margin:0;
+  padding:0;
+
+}
+.contain_it_all{
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  background:inherit;
+  background-attachment: fixed;
+  margin-top: 50px;
+  margin-left: 70px;
+  margin-right: 70px;
+  background-image: linear-gradient(
+    rgba(0, 0, 0, 0.6),
+    rgba(0, 0, 0, 0.6)
+  );
+
+}
+
+
+.search_form{
+  display: flex;
+  justify-content: left;
+  align-content: center;
+}
+
+#temp_switch{
+  display:flex;
+  justify-content: space-between;
+  align-content: center;
+}
 #content{
   display:flex;
   flex-direction: column;
+  justify-content: center;
+  align-content: center;
 }
+
+
+#weather_icon{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 10%;
+}
+
+/* The switch - the box around the slider */
 .switch {
     position: relative;
     display: inline-block;
@@ -66,8 +115,5 @@
     border-radius: 50%;
   }
 
-#temp_switch{
-    display:flex;
-    justify-content: space-between;
-    align-content: center;
-}
+
+
